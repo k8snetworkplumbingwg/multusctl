@@ -23,19 +23,10 @@ var listCommand = &cobra.Command{
 	Use:   "list",
 	Short: "List network attachment definitions",
 	Run: func(cmd *cobra.Command, args []string) {
-		namespace := listNamespace
-		if namespace == "" {
-			if namespace_, ok := turandotcommon.GetConfiguredNamespace(kubeconfigPath); ok {
-				namespace = namespace_
-			}
-			if namespace == "" {
-				puccinicommon.Fail("could not discover namespace and \"--namespace\" not provided")
-			}
-		}
-
+		namespace := GetNamespace(listNamespace)
 		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
 		puccinicommon.FailOnError(err)
-		networkAttachmentDefintions, err := client.ListNetworkAttachmentDefinitions(namespace)
+		networkAttachmentDefintions, err := client.List()
 		puccinicommon.FailOnError(err)
 
 		if bare {
@@ -45,7 +36,7 @@ var listCommand = &cobra.Command{
 		} else {
 			table := turandotcommon.NewTable("Name", "Pods")
 			for _, networkAttachmentDefintion := range networkAttachmentDefintions.Items {
-				pods, err := client.ListPodsForNetworkAttachmentDefinition(namespace, networkAttachmentDefintion.Name)
+				pods, err := client.ListPods(networkAttachmentDefintion.Name)
 				puccinicommon.FailOnError(err)
 				podNames := ""
 				for _, pod := range pods {

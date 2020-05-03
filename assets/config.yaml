@@ -1,0 +1,13 @@
+name: data-plane
+bridge: data-plane
+isDefaultGateway: true
+ipMasq: true
+promiscMode: true
+ipam:
+  type: host-local
+  subnet: 192.168.2.0/24
+  rangeStart: 192.168.2.2
+  rangeEnd: 192.168.2.254
+  routes:
+  - dst: 0.0.0.0/0
+  gateway: 192.168.2.1

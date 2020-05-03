@@ -141,8 +141,7 @@ func (self *Client) createServiceAccount() (*core.ServiceAccount, error) {
 
 	serviceAccount := &core.ServiceAccount{
 		ObjectMeta: meta.ObjectMeta{
-			Name:      name,
-			Namespace: self.namespace,
+			Name: name,
 		},
 	}
 
