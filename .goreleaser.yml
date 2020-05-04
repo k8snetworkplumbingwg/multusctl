@@ -1,0 +1,51 @@
+
+builds:
+
+- id: multusctl
+  main: ./multusctl
+  binary: multusctl
+  goarch:
+  - amd64
+  goos:
+  - linux
+  - darwin
+  - windows
+  ldflags:
+  - -X 'github.com/tliron/multusctl/version.GitVersion={{.Env.VERSION}}'
+  - -X 'github.com/tliron/multusctl/version.GitRevision={{.Env.REVISION}}'
+  - -X 'github.com/tliron/multusctl/version.Timestamp={{.Env.TIMESTAMP}}'
+
+nfpms:
+
+- formats:
+  - rpm
+  - deb
+  homepage: https://github.com/tliron/multusctl
+  maintainer: Tal Liron <tal.liron@gmail.com>
+  description: CLI client for Multus CNI.
+  license: Apache 2.0
+
+archives:
+
+- files:
+  - README.md
+  - LICENSE
+  - NOTICE
+  - assets/**/*
+
+  format_overrides:
+  - goos: windows
+    format: zip
+
+checksum:
+
+  name_template: checksums.txt
+
+release:
+
+  #disable: true
+  #prerelease: true
+
+  github:
+    owner: tliron
+    name: multusctl
