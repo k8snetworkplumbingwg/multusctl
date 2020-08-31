@@ -2,15 +2,15 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/multusctl/client"
-	puccinicommon "github.com/tliron/puccini/common"
 )
 
 var deleteNamespace string
 
 func init() {
 	rootCommand.AddCommand(deleteCommand)
-	deleteCommand.PersistentFlags().StringVarP(&deleteNamespace, "namespace", "n", "", "namespace")
+	deleteCommand.Flags().StringVarP(&deleteNamespace, "namespace", "n", "", "namespace")
 }
 
 var deleteCommand = &cobra.Command{
@@ -20,8 +20,8 @@ var deleteCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		namespace := GetNamespace(deleteNamespace)
 		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
-		puccinicommon.FailOnError(err)
+		util.FailOnError(err)
 		err = client.Delete(args[0])
-		puccinicommon.FailOnError(err)
+		util.FailOnError(err)
 	},
 }

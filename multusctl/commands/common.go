@@ -2,8 +2,8 @@ package commands
 
 import (
 	"github.com/op/go-logging"
-	puccinicommon "github.com/tliron/puccini/common"
-	turandotcommon "github.com/tliron/turandot/common"
+	"github.com/tliron/kutil/kubernetes"
+	"github.com/tliron/kutil/util"
 )
 
 const toolName = "multusctl"
@@ -14,8 +14,8 @@ var installationNamespace string
 
 func GetNamespace(namespace string) string {
 	if namespace == "" {
-		if namespace, _ = turandotcommon.GetConfiguredNamespace(kubeconfigPath); namespace == "" {
-			puccinicommon.Fail("could not discover namespace and \"--namespace\" not provided")
+		if namespace, _ = kubernetes.GetConfiguredNamespace(kubeconfigPath, context); namespace == "" {
+			util.Fail("could not discover namespace and \"--namespace\" not provided")
 		}
 	}
 	return namespace

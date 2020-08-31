@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tliron/turandot/common"
+	"github.com/tliron/kutil/kubernetes"
 	apps "k8s.io/api/apps/v1"
 	core "k8s.io/api/core/v1"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -96,7 +96,7 @@ func (self *Client) isPodOwnedBy(pod *core.Pod, daemonSet *apps.DaemonSet) bool 
 
 func (self *Client) getRegistry(registry string) (string, error) {
 	if registry == "internal" {
-		if registry, err := common.GetInternalRegistryURL(self.kubernetes); err == nil {
+		if registry, err := kubernetes.GetInternalRegistryURL(self.kubernetes); err == nil {
 			return registry, nil
 		} else {
 			return "", fmt.Errorf("could not discover internal registry: %s", err.Error())

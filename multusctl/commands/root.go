@@ -5,15 +5,17 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	puccinicommon "github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/terminal"
+	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/util"
 )
 
 var logTo string
 var verbose int
-var colorize bool
+var maxWidth int
+var colorize string
 var kubeconfigPath string
 var masterUrl string
+var context string
 
 func init() {
 	var defaultKubeconfigPath string
@@ -23,27 +25,28 @@ func init() {
 
 	rootCommand.PersistentFlags().StringVarP(&logTo, "log", "l", "", "log to file (defaults to stderr)")
 	rootCommand.PersistentFlags().CountVarP(&verbose, "verbose", "v", "add a log verbosity level (can be used twice)")
-	rootCommand.PersistentFlags().BoolVarP(&colorize, "colorize", "z", true, "colorize output")
+	rootCommand.PersistentFlags().IntVarP(&maxWidth, "width", "j", 0, "maximum output width (0 to use terminal width, -1 for no maximum)")
+	rootCommand.PersistentFlags().StringVarP(&colorize, "colorize", "z", "true", "colorize output (boolean or \"force\")")
 	rootCommand.PersistentFlags().StringVarP(&masterUrl, "master", "m", "", "address of the Kubernetes API server")
 	rootCommand.PersistentFlags().StringVarP(&kubeconfigPath, "kubeconfig", "k", defaultKubeconfigPath, "path to Kubernetes configuration")
+	rootCommand.PersistentFlags().StringVarP(&context, "context", "x", "", "name of context in Kubernetes configuration")
 }
 
 var rootCommand = &cobra.Command{
 	Use:   toolName,
 	Short: "Control Multus CNI",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if colorize {
-			terminal.EnableColor()
-		}
+		err := terminal.ProcessColorizeFlag(colorize)
+		util.FailOnError(err)
 		if logTo == "" {
-			puccinicommon.ConfigureLogging(verbose, nil)
+			util.ConfigureLogging(verbose, nil)
 		} else {
-			puccinicommon.ConfigureLogging(verbose, &logTo)
+			util.ConfigureLogging(verbose, &logTo)
 		}
 	},
 }
 
 func Execute() {
 	err := rootCommand.Execute()
-	puccinicommon.FailOnError(err)
+	util.FailOnError(err)
 }

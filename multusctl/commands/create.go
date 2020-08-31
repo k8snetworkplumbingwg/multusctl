@@ -2,11 +2,11 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/tliron/kutil/ard"
+	"github.com/tliron/kutil/format"
+	urlpkg "github.com/tliron/kutil/url"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/multusctl/client"
-	"github.com/tliron/puccini/ard"
-	puccinicommon "github.com/tliron/puccini/common"
-	"github.com/tliron/puccini/common/format"
-	urlpkg "github.com/tliron/puccini/url"
 )
 
 var createNamespace string
@@ -14,8 +14,8 @@ var configFile string
 
 func init() {
 	rootCommand.AddCommand(createCommand)
-	createCommand.PersistentFlags().StringVarP(&createNamespace, "namespace", "n", "", "namespace")
-	createCommand.PersistentFlags().StringVarP(&configFile, "file", "f", "", "path to config file (YAML or JSON)")
+	createCommand.Flags().StringVarP(&createNamespace, "namespace", "n", "", "namespace")
+	createCommand.Flags().StringVarP(&configFile, "file", "f", "", "path to config file (YAML or JSON)")
 }
 
 var createCommand = &cobra.Command{
@@ -25,30 +25,33 @@ var createCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		namespace := GetNamespace(createNamespace)
 		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
-		puccinicommon.FailOnError(err)
+		util.FailOnError(err)
 
 		var config string
 
 		if configFile != "" {
-			url := urlpkg.NewFileURL(configFile)
-			config, err = urlpkg.ReadToString(url)
+			urlContext := urlpkg.NewContext()
+			defer urlContext.Release()
+
+			url := urlpkg.NewFileURL(configFile, urlContext)
+			config, err = urlpkg.ReadString(url)
 
 			switch url.Format() {
 			case "json":
 				err = format.ValidateJSON(config)
-				puccinicommon.FailOnError(err)
+				util.FailOnError(err)
 			case "yaml":
 				data, err := format.DecodeYAML(config)
-				puccinicommon.FailOnError(err)
+				util.FailOnError(err)
 				data, _ = ard.ToStringMaps(data)
 				config, err = format.EncodeJSON(data, "  ")
-				puccinicommon.FailOnError(err)
+				util.FailOnError(err)
 			}
 		} else {
-			puccinicommon.Fail("must provide \"--file\" or TODO")
+			util.Fail("must provide \"--file\" or TODO")
 		}
 
 		_, err = client.Create(args[0], config)
-		puccinicommon.FailOnError(err)
+		util.FailOnError(err)
 	},
 }

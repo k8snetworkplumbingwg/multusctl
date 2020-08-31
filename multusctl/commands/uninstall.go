@@ -2,13 +2,13 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/tliron/kutil/util"
 	"github.com/tliron/multusctl/client"
-	"github.com/tliron/puccini/common"
 )
 
 func init() {
 	rootCommand.AddCommand(uninstallCommand)
-	uninstallCommand.PersistentFlags().StringVarP(&installationNamespace, "namespace", "n", "kube-system", "namespace")
+	uninstallCommand.Flags().StringVarP(&installationNamespace, "namespace", "n", "kube-system", "namespace")
 }
 
 var uninstallCommand = &cobra.Command{
@@ -16,7 +16,7 @@ var uninstallCommand = &cobra.Command{
 	Short: "Uninstall Multus CNI",
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := client.NewClient(masterUrl, kubeconfigPath, installationNamespace)
-		common.FailOnError(err)
+		util.FailOnError(err)
 		client.Uninstall()
 	},
 }
