@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/format"
@@ -28,7 +27,7 @@ var getCommand = &cobra.Command{
 		util.FailOnError(err)
 		networkAttachmentDefinition, err := client.Get(args[0])
 		util.FailOnError(err)
-		data, err := format.DecodeJSON(strings.TrimSpace(networkAttachmentDefinition.Spec.Config))
+		data, err := format.DecodeJSON(networkAttachmentDefinition.Spec.Config)
 		util.FailOnError(err)
 		config, err := format.EncodeYAML(data, "  ", false)
 		util.FailOnError(err)

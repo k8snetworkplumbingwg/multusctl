@@ -42,7 +42,7 @@ func (self *Client) ListPods(name string) ([]*core.Pod, error) {
 
 	if pods, err := self.kubernetes.CoreV1().Pods(self.namespace).List(self.context, meta.ListOptions{}); err == nil {
 		for _, pod := range pods.Items {
-			if networks, ok := pod.Annotations["k8s.v1.cni.cncf.io/networks"]; ok {
+			if networks, ok := pod.Annotations[net.NetworkStatusAnnot]; ok {
 				var data interface{}
 				if err := json.Unmarshal([]byte(networks), &data); err == nil {
 					if data_, ok := data.([]interface{}); ok {
