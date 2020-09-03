@@ -50,7 +50,7 @@ func (self *Client) ListPods(name string) ([]*core.Pod, error) {
 							if data___, ok := data__.(map[string]interface{}); ok {
 								if name_, ok := data___["name"]; ok {
 									if name_ == name {
-										r = append(r, &pod)
+										r = append(r, pod.DeepCopy())
 									}
 								}
 							}
