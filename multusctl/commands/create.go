@@ -51,7 +51,7 @@ var createCommand = &cobra.Command{
 			util.Fail("must provide \"--file\" or TODO")
 		}
 
-		_, err = client.Create(args[0], config)
+		_, err = client.CreateNetworkAttachmentDefinition(args[0], config)
 		util.FailOnError(err)
 	},
 }

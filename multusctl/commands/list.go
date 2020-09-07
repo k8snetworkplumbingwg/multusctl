@@ -25,7 +25,7 @@ var listCommand = &cobra.Command{
 		namespace := GetNamespace(listNamespace)
 		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
 		util.FailOnError(err)
-		networkAttachmentDefintions, err := client.List()
+		networkAttachmentDefintions, err := client.ListNetworkAttachmentDefinitions()
 		util.FailOnError(err)
 
 		if bare {
@@ -35,7 +35,7 @@ var listCommand = &cobra.Command{
 		} else {
 			table := terminal.NewTable(maxWidth, "Name", "Pods")
 			for _, networkAttachmentDefintion := range networkAttachmentDefintions.Items {
-				pods, err := client.ListPods(networkAttachmentDefintion.Name)
+				pods, err := client.ListPodsForNetworkAttachmentDefinition(networkAttachmentDefintion.Name)
 				util.FailOnError(err)
 				podNames := ""
 				for _, pod := range pods {

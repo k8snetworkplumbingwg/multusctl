@@ -25,7 +25,7 @@ var getCommand = &cobra.Command{
 		namespace := GetNamespace(getNamespace)
 		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
 		util.FailOnError(err)
-		networkAttachmentDefinition, err := client.Get(args[0])
+		networkAttachmentDefinition, err := client.GetNetworkAttachmentDefinition(args[0])
 		util.FailOnError(err)
 		data, err := format.DecodeJSON(networkAttachmentDefinition.Spec.Config)
 		util.FailOnError(err)
