@@ -94,17 +94,17 @@ func (self *Client) isPodOwnedBy(pod *core.Pod, daemonSet *apps.DaemonSet) bool 
 	return false
 }
 
-func (self *Client) getRegistry(registry string) (string, error) {
-	if registry == "internal" {
-		if registry, err := kubernetes.GetInternalRegistryURL(self.kubernetes); err == nil {
-			return registry, nil
+func (self *Client) getSourceRegistryHost(registryHost string) (string, error) {
+	if registryHost == "internal" {
+		if registryHost, err := kubernetes.GetInternalRegistryHost(self.context, self.kubernetes); err == nil {
+			return registryHost, nil
 		} else {
 			return "", fmt.Errorf("could not discover internal registry: %s", err.Error())
 		}
 	}
 
-	if registry != "" {
-		return registry, nil
+	if registryHost != "" {
+		return registryHost, nil
 	} else {
 		return "", errors.New("must provide \"--registry\"")
 	}

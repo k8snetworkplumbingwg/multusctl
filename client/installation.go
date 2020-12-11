@@ -10,10 +10,10 @@ import (
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (self *Client) Install(registry string, wait bool) error {
+func (self *Client) Install(sourceRegistryHost string, wait bool) error {
 	var err error
 
-	if registry, err = self.getRegistry(registry); err != nil {
+	if sourceRegistryHost, err = self.getSourceRegistryHost(sourceRegistryHost); err != nil {
 		return err
 	}
 

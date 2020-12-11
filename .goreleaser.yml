@@ -11,9 +11,9 @@ builds:
   - darwin
   - windows
   ldflags:
-  - -X 'github.com/tliron/multusctl/version.GitVersion={{.Env.VERSION}}'
-  - -X 'github.com/tliron/multusctl/version.GitRevision={{.Env.REVISION}}'
-  - -X 'github.com/tliron/multusctl/version.Timestamp={{.Env.TIMESTAMP}}'
+  - -X 'github.com/tliron/kutil/version.GitVersion={{.Env.VERSION}}'
+  - -X 'github.com/tliron/kutil/version.GitRevision={{.Env.REVISION}}'
+  - -X 'github.com/tliron/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
 
 nfpms:
 
