@@ -4,14 +4,14 @@ import (
 	"context"
 
 	netpkg "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/client/clientset/versioned"
-	"github.com/op/go-logging"
+	"github.com/tliron/kutil/logging"
 	apiextensionspkg "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	kubernetespkg "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-var log = logging.MustGetLogger("multusctl.client")
+var log = logging.GetLogger("multusctl.client")
 
 type Client struct {
 	config        *rest.Config

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
@@ -27,7 +28,7 @@ var getCommand = &cobra.Command{
 		util.FailOnError(err)
 		networkAttachmentDefinition, err := client.GetNetworkAttachmentDefinition(args[0])
 		util.FailOnError(err)
-		data, err := format.DecodeJSON(networkAttachmentDefinition.Spec.Config)
+		data, _, err := ard.DecodeJSON(networkAttachmentDefinition.Spec.Config, false)
 		util.FailOnError(err)
 		config, err := format.EncodeYAML(data, "  ", false)
 		util.FailOnError(err)

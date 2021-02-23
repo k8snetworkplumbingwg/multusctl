@@ -40,10 +40,11 @@ var createCommand = &cobra.Command{
 			case "json":
 				err = format.ValidateJSON(config)
 				util.FailOnError(err)
+
 			case "yaml":
-				data, err := format.DecodeYAML(config)
+				data, _, err := ard.DecodeYAML(config, false)
 				util.FailOnError(err)
-				data, _ = ard.ToStringMaps(data)
+				data, _ = ard.MapsToStringMaps(data)
 				config, err = format.EncodeJSON(data, "  ")
 				util.FailOnError(err)
 			}

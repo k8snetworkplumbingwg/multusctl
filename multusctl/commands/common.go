@@ -1,14 +1,14 @@
 package commands
 
 import (
-	"github.com/op/go-logging"
 	"github.com/tliron/kutil/kubernetes"
+	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/util"
 )
 
 const toolName = "multusctl"
 
-var log = logging.MustGetLogger(toolName)
+var log = logging.GetLogger(toolName)
 
 var installationNamespace string
 

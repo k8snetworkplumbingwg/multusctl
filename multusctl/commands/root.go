@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/tliron/kutil/logging"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
 )
@@ -39,9 +40,9 @@ var rootCommand = &cobra.Command{
 		err := terminal.ProcessColorizeFlag(colorize)
 		util.FailOnError(err)
 		if logTo == "" {
-			util.ConfigureLogging(verbose, nil)
+			logging.Configure(verbose, nil)
 		} else {
-			util.ConfigureLogging(verbose, &logTo)
+			logging.Configure(verbose, &logTo)
 		}
 	},
 }
