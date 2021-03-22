@@ -10,6 +10,8 @@ import (
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/images/multus-daemonset.yml
+
 func (self *Client) Install(sourceRegistryHost string, wait bool) error {
 	var err error
 
@@ -109,6 +111,17 @@ func (self *Client) createCustomResourceDefinition() (*apiextensions.CustomResou
 							Description: "NetworkAttachmentDefinition is a CRD schema specified by the Network Plumbing Working Group to express the intent for attaching pods to one or more logical or physical networks. More information available at: https://github.com/k8snetworkplumbingwg/multi-net-spec",
 							Type:        "object",
 							Properties: map[string]apiextensions.JSONSchemaProps{
+								"apiVersion": {
+									Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+									Type:        "string",
+								},
+								"kind": {
+									Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+									Type:        "string",
+								},
+								"metadata": {
+									Type: "object",
+								},
 								"spec": {
 									Description: "NetworkAttachmentDefinition spec defines the desired state of a network attachment",
 									Type:        "object",
@@ -320,7 +333,7 @@ func (self *Client) createDaemonSet(architecture string, configMap *core.ConfigM
 					Containers: []core.Container{
 						{
 							Name:  "kube-multus",
-							Image: "nfvpe/multus:v3.4.1",
+							Image: "ghcr.io/k8snetworkplumbingwg/multus-cni:stable",
 							Command: []string{
 								"/entrypoint.sh",
 							},
