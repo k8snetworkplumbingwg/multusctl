@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/ard"
 	"github.com/tliron/kutil/format"
@@ -32,6 +30,6 @@ var getCommand = &cobra.Command{
 		util.FailOnError(err)
 		config, err := format.EncodeYAML(data, "  ", false)
 		util.FailOnError(err)
-		fmt.Fprint(terminal.Stdout, config)
+		terminal.Print(config)
 	},
 }

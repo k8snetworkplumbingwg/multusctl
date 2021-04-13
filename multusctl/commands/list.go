@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
@@ -30,7 +28,7 @@ var listCommand = &cobra.Command{
 
 		if bare {
 			for _, networkAttachmentDefintion := range networkAttachmentDefintions.Items {
-				fmt.Fprintln(terminal.Stdout, networkAttachmentDefintion.Name)
+				terminal.Println(networkAttachmentDefintion.Name)
 			}
 		} else {
 			table := terminal.NewTable(maxWidth, "Name", "Pods")
