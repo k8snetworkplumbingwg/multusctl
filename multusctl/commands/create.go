@@ -3,19 +3,20 @@ package commands
 import (
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/ard"
-	"github.com/tliron/kutil/format"
+	formatpkg "github.com/tliron/kutil/format"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 	"github.com/tliron/multusctl/client"
 )
 
 var createNamespace string
-var configFile string
+var configUrl string
 
 func init() {
 	rootCommand.AddCommand(createCommand)
 	createCommand.Flags().StringVarP(&createNamespace, "namespace", "n", "", "namespace")
-	createCommand.Flags().StringVarP(&configFile, "file", "f", "", "path to config file (YAML or JSON)")
+	createCommand.Flags().StringVarP(&configUrl, "url", "u", "", "URL or path to config file (defaults to stdin)")
+	createCommand.Flags().StringVarP(&format, "format", "f", "", "force input format (\"yaml\" or \"json\", defaults to URL extension)")
 }
 
 var createCommand = &cobra.Command{
@@ -27,29 +28,43 @@ var createCommand = &cobra.Command{
 		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
 		util.FailOnError(err)
 
-		var config string
+		var url urlpkg.URL
 
-		if configFile != "" {
+		if configUrl != "" {
 			urlContext := urlpkg.NewContext()
 			defer urlContext.Release()
 
-			url := urlpkg.NewFileURL(configFile, urlContext)
-			config, err = urlpkg.ReadString(url)
-
-			switch url.Format() {
-			case "json":
-				err = format.ValidateJSON(config)
-				util.FailOnError(err)
-
-			case "yaml":
-				data, _, err := ard.DecodeYAML(config, false)
-				util.FailOnError(err)
-				data, _ = ard.MapsToStringMaps(data)
-				config, err = format.EncodeJSON(data, "  ")
-				util.FailOnError(err)
+			url, err = urlpkg.NewValidURL(configUrl, nil, urlContext)
+			util.FailOnError(err)
+			if format == "" {
+				format = url.Format()
 			}
 		} else {
-			util.Fail("must provide \"--file\" or TODO")
+			if format == "" {
+				format = "yaml"
+			}
+			url, err = urlpkg.ReadToInternalURLFromStdin(format)
+			util.FailOnError(err)
+		}
+
+		var config string
+		config, err = urlpkg.ReadString(url)
+		util.FailOnError(err)
+
+		switch format {
+		case "json":
+			err = formatpkg.ValidateJSON(config)
+			util.FailOnError(err)
+
+		case "yaml":
+			data, _, err := ard.DecodeYAML(config, false)
+			util.FailOnError(err)
+			data, _ = ard.MapsToStringMaps(data)
+			config, err = formatpkg.EncodeJSON(data, "  ")
+			util.FailOnError(err)
+
+		default:
+			util.Failf("unsupported format: %q", format)
 		}
 
 		_, err = client.CreateNetworkAttachmentDefinition(args[0], config)

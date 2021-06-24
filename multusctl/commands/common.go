@@ -11,6 +11,7 @@ const toolName = "multusctl"
 var log = logging.GetLogger(toolName)
 
 var installationNamespace string
+var format string
 
 func GetNamespace(namespace string) string {
 	if namespace == "" {

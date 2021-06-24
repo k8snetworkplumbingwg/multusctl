@@ -12,7 +12,7 @@ import (
 
 // https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/images/multus-daemonset.yml
 
-func (self *Client) Install(sourceRegistryHost string, wait bool) error {
+func (self *Client) Install(runtime string, sourceRegistryHost string, wait bool) error {
 	var err error
 
 	if sourceRegistryHost, err = self.getSourceRegistryHost(sourceRegistryHost); err != nil {
@@ -42,7 +42,7 @@ func (self *Client) Install(sourceRegistryHost string, wait bool) error {
 	}
 
 	var daemonSet *apps.DaemonSet
-	if daemonSet, err = self.createDaemonSet("amd64", configMap, serviceAccount); err != nil {
+	if daemonSet, err = self.createDaemonSet(sourceRegistryHost, runtime, configMap, serviceAccount); err != nil {
 		return err
 	}
 
@@ -56,10 +56,7 @@ func (self *Client) Install(sourceRegistryHost string, wait bool) error {
 }
 
 func (self *Client) Uninstall() {
-	if err := self.kubernetes.AppsV1().DaemonSets(self.namespace).Delete(self.context, "kube-multus-ds-amd64", meta.DeleteOptions{}); err != nil {
-		log.Warningf("%s", err)
-	}
-	if err := self.kubernetes.AppsV1().DaemonSets(self.namespace).Delete(self.context, "kube-multus-ds-ppc64le", meta.DeleteOptions{}); err != nil {
+	if err := self.kubernetes.AppsV1().DaemonSets(self.namespace).Delete(self.context, "kube-multus-ds", meta.DeleteOptions{}); err != nil {
 		log.Warningf("%s", err)
 	}
 	if err := self.kubernetes.CoreV1().ConfigMaps(self.namespace).Delete(self.context, "multus-cni-config", meta.DeleteOptions{}); err != nil {
@@ -288,10 +285,11 @@ func (self *Client) createConfigMap() (*core.ConfigMap, error) {
 	}
 }
 
-func (self *Client) createDaemonSet(architecture string, configMap *core.ConfigMap, serviceAccount *core.ServiceAccount) (*apps.DaemonSet, error) {
-	name := "kube-multus-ds-" + architecture
+func (self *Client) createDaemonSet(sourceRegistryHost string, runtime string, configMap *core.ConfigMap, serviceAccount *core.ServiceAccount) (*apps.DaemonSet, error) {
+	name := "kube-multus-ds"
 
 	true_ := true
+	var terminationGracePeriodSeconds int64 = 10
 	daemonSet := &apps.DaemonSet{
 		ObjectMeta: meta.ObjectMeta{
 			Name: name,
@@ -320,9 +318,6 @@ func (self *Client) createDaemonSet(architecture string, configMap *core.ConfigM
 				},
 				Spec: core.PodSpec{
 					HostNetwork: true,
-					NodeSelector: map[string]string{
-						"kubernetes.io/arch": architecture,
-					},
 					Tolerations: []core.Toleration{
 						{
 							Operator: core.TolerationOpExists,
@@ -333,13 +328,9 @@ func (self *Client) createDaemonSet(architecture string, configMap *core.ConfigM
 					Containers: []core.Container{
 						{
 							Name:  "kube-multus",
-							Image: "ghcr.io/k8snetworkplumbingwg/multus-cni:stable",
+							Image: sourceRegistryHost + "/k8snetworkplumbingwg/multus-cni:stable",
 							Command: []string{
 								"/entrypoint.sh",
-							},
-							Args: []string{
-								"--multus-conf-file=auto",
-								"--cni-version=0.3.1",
 							},
 							Resources: core.ResourceRequirements{
 								Requests: core.ResourceList{
@@ -354,59 +345,144 @@ func (self *Client) createDaemonSet(architecture string, configMap *core.ConfigM
 							SecurityContext: &core.SecurityContext{
 								Privileged: &true_,
 							},
-							VolumeMounts: []core.VolumeMount{
-								{
-									Name:      "cni",
-									MountPath: "/host/etc/cni/net.d",
-								},
-								{
-									Name:      "cnibin",
-									MountPath: "/host/opt/cni/bin",
-								},
-								{
-									Name:      "multus-cfg",
-									MountPath: "/tmp/multus-conf",
-								},
-							},
 						},
 					},
-					Volumes: []core.Volume{
-						{
-							Name: "cni",
-							VolumeSource: core.VolumeSource{
-								HostPath: &core.HostPathVolumeSource{
-									Path: "/etc/cni/net.d",
-								},
-							},
+					TerminationGracePeriodSeconds: &terminationGracePeriodSeconds,
+				},
+			},
+		},
+	}
+
+	switch runtime {
+	case "crio":
+		daemonSet.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities = &core.Capabilities{
+			Add: []core.Capability{"SYS_ADMIN"},
+		}
+
+		daemonSet.Spec.Template.Spec.Containers[0].Args = []string{
+			"--cni-version=0.3.1",
+			"--cni-bin-dir=/host/usr/libexec/cni",
+			"--multus-conf-file=auto",
+			"--restart-crio=true",
+		}
+
+		daemonSet.Spec.Template.Spec.Containers[0].VolumeMounts = []core.VolumeMount{
+			{
+				Name:      "run",
+				MountPath: "/run",
+			},
+			{
+				Name:      "cni",
+				MountPath: "/host/etc/cni/net.d",
+			},
+			{
+				Name:      "cnibin",
+				MountPath: "/host/usr/libexec/cni",
+			},
+			{
+				Name:      "multus-cfg",
+				MountPath: "/tmp/multus-conf",
+			},
+		}
+
+		daemonSet.Spec.Template.Spec.Volumes = []core.Volume{
+			{
+				Name: "run",
+				VolumeSource: core.VolumeSource{
+					HostPath: &core.HostPathVolumeSource{
+						Path: "/run",
+					},
+				},
+			},
+			{
+				Name: "cni",
+				VolumeSource: core.VolumeSource{
+					HostPath: &core.HostPathVolumeSource{
+						Path: "/etc/cni/net.d",
+					},
+				},
+			},
+			{
+				Name: "cnibin",
+				VolumeSource: core.VolumeSource{
+					HostPath: &core.HostPathVolumeSource{
+						Path: "/usr/libexec/cni",
+					},
+				},
+			},
+			{
+				Name: "multus-cfg",
+				VolumeSource: core.VolumeSource{
+					ConfigMap: &core.ConfigMapVolumeSource{
+						LocalObjectReference: core.LocalObjectReference{
+							Name: configMap.Name,
 						},
-						{
-							Name: "cnibin",
-							VolumeSource: core.VolumeSource{
-								HostPath: &core.HostPathVolumeSource{
-									Path: "/opt/cni/bin",
-								},
-							},
-						},
-						{
-							Name: "multus-cfg",
-							VolumeSource: core.VolumeSource{
-								ConfigMap: &core.ConfigMapVolumeSource{
-									LocalObjectReference: core.LocalObjectReference{
-										Name: configMap.Name,
-									},
-									Items: []core.KeyToPath{
-										{
-											Key:  "cni-conf.json",
-											Path: "70-multus.conf",
-										},
-									},
-								},
+						Items: []core.KeyToPath{
+							{
+								Key:  "cni-conf.json",
+								Path: "70-multus.conf",
 							},
 						},
 					},
 				},
 			},
-		},
+		}
+
+	default:
+		daemonSet.Spec.Template.Spec.Containers[0].Args = []string{
+			"--multus-conf-file=auto",
+			"--cni-version=0.3.1",
+		}
+
+		daemonSet.Spec.Template.Spec.Containers[0].VolumeMounts = []core.VolumeMount{
+			{
+				Name:      "cni",
+				MountPath: "/host/etc/cni/net.d",
+			},
+			{
+				Name:      "cnibin",
+				MountPath: "/host/opt/cni/bin",
+			},
+			{
+				Name:      "multus-cfg",
+				MountPath: "/tmp/multus-conf",
+			},
+		}
+
+		daemonSet.Spec.Template.Spec.Volumes = []core.Volume{
+			{
+				Name: "cni",
+				VolumeSource: core.VolumeSource{
+					HostPath: &core.HostPathVolumeSource{
+						Path: "/etc/cni/net.d",
+					},
+				},
+			},
+			{
+				Name: "cnibin",
+				VolumeSource: core.VolumeSource{
+					HostPath: &core.HostPathVolumeSource{
+						Path: "/opt/cni/bin",
+					},
+				},
+			},
+			{
+				Name: "multus-cfg",
+				VolumeSource: core.VolumeSource{
+					ConfigMap: &core.ConfigMapVolumeSource{
+						LocalObjectReference: core.LocalObjectReference{
+							Name: configMap.Name,
+						},
+						Items: []core.KeyToPath{
+							{
+								Key:  "cni-conf.json",
+								Path: "70-multus.conf",
+							},
+						},
+					},
+				},
+			},
+		}
 	}
 
 	if daemonSet, err := self.kubernetes.AppsV1().DaemonSets(self.namespace).Create(self.context, daemonSet, meta.CreateOptions{}); err == nil {

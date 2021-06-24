@@ -8,6 +8,7 @@ MODULE=github.com/tliron/multusctl
 ROOT=$(readlink --canonicalize "$_HERE/..")
 
 GOPATH=${GOPATH:-$HOME/go}
+export PATH=$GOPATH/bin:$PATH
 
 WORKSPACE=${WORKSPACE:-workspace}
 
