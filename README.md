@@ -7,22 +7,27 @@ multusctl
 
 CLI client for [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni).
 
-This client can be used to manage network attachment definitions in a more user-friendly way than working with
-`kubectl` directly. E.g.:
+This client can be used to manage network attachment definitions in a more user-friendly way than
+working with `kubectl` directly. CNI configs are normally in JSON, but this tool allows you to use both
+JSON and YAML notations.
 
-    multusctl create myattachment --file my-cni-config.yaml
+Example:
+
+    multusctl install --wait
+    multusctl create myattachment --url=assets/config.yaml
+    multusctl list
     multusctl get myattachment
 
-Some quality-of-life features:
+The CNI config can also be provided via stdin:
 
-* CNI configs are normally in JSON, but this tool allows you to use both JSON and YAML notations.
-* `multusctl list` it will show you not only the network attachment definitions but also which pods are attached
-  to them.
-* Via `multusctl install` and `multusctl uninstall` this utility is all you need to start using Multus.
+    cat assets/config.yaml | multusctl create myattachment
+
+Note that `multusctl list` it will show you not only the network attachment definitions but also which
+pods are attached to them.
 
 You can also use this tool as a `kubectl` plugin. Just rename the `multusctl` executable to, say,
-`kubectl-multus`, and then you can do this:
+`kubectl-nad`, and then you can do this:
 
-    kubectl multus create myattachment --file my-cni-config.yaml
+    kubectl nad create myattachment --url=assets/config.yaml
 
 Also see [this issue](https://github.com/k8snetworkplumbingwg/multus-cni/issues/488).
