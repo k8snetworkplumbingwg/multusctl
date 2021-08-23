@@ -17,4 +17,5 @@ function test () {
   kubectl create -f ./assets/pod.yml
 }
 
+#MASTER_IFACE is the NIC name of the parent interface that will be added to k8s using multus
 test $MASTER_IFACE
