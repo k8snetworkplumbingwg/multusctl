@@ -3,14 +3,14 @@ module github.com/tliron/multusctl
 go 1.17
 
 require (
-	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.1.0
+	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.2.0
 	github.com/spf13/cobra v1.2.1
-	github.com/tliron/kutil v0.1.48
-	k8s.io/api v0.22.1
-	k8s.io/apiextensions-apiserver v0.22.1
-	k8s.io/apimachinery v0.22.1
-	k8s.io/client-go v0.22.1
-	k8s.io/klog/v2 v2.10.0
+	github.com/tliron/kutil v0.1.49
+	k8s.io/api v0.22.3
+	k8s.io/apiextensions-apiserver v0.22.3
+	k8s.io/apimachinery v0.22.3
+	k8s.io/client-go v0.22.3
+	k8s.io/klog/v2 v2.30.0
 )
 
 require (
@@ -30,7 +30,7 @@ require (
 	github.com/go-git/gcfg v1.5.0 // indirect
 	github.com/go-git/go-billy/v5 v5.3.1 // indirect
 	github.com/go-git/go-git/v5 v5.4.2 // indirect
-	github.com/go-logr/logr v0.4.0 // indirect
+	github.com/go-logr/logr v1.2.0 // indirect
 	github.com/goccy/go-yaml v1.9.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -81,7 +81,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	k8s.io/kube-openapi v0.0.0-20210421082810-95288971da7e // indirect
-	k8s.io/utils v0.0.0-20210707171843-4b05e18ac7d9 // indirect
+	k8s.io/utils v0.0.0-20210819203725-bdf08cb9a70a // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )

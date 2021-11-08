@@ -2,8 +2,8 @@ multusctl
 =========
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Latest Release](https://img.shields.io/github/release/tliron/multusctl.svg)](https://github.com/tliron/multusctl/releases/latest)
-[![Go Report Card](https://goreportcard.com/badge/github.com/tliron/multusctl)](https://goreportcard.com/report/github.com/tliron/multusctl)
+[![Latest Release](https://img.shields.io/github/release/k8snetworkplumbingwg/multusctl.svg)](https://github.com/k8snetworkplumbingwg/multusctl/releases/latest)
+[![Go Report Card](https://goreportcard.com/badge/github.com/k8snetworkplumbingwg/multusctl)](https://goreportcard.com/report/github.com/k8snetworkplumbingwg/multusctl)
 
 CLI tool for [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni).
 
@@ -33,5 +33,3 @@ You can also use this tool as a `kubectl` plugin. Just rename the `multusctl` ex
 `kubectl-nad`, and then you can do this:
 
     kubectl nad create myattachment --url=assets/config.yaml
-
-Also see [this issue](https://github.com/k8snetworkplumbingwg/multus-cni/issues/488).
