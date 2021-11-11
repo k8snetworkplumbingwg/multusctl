@@ -7,27 +7,38 @@ multusctl
 
 CLI tool for [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni).
 
-`multusctl` can be used to install and uninstall Multus. Additionally, it provides a more
-user-friendly way to work with network attachment definitions, as compared to using `kubectl`
-directly.
+`multusctl` provides a more user-friendly way to work with network attachment definitions as
+compared to using `kubectl` directly. Additionally, it can be used to install and uninstall Multus.
+
+In particular is solves the problem of escaping/unescaping the JSON CNI configuration embedded
+in the network attachment definition custom resource.
 
 Additional features:
 
-* CNI configs are normally in JSON, but `multusctl` allows you to use YAML (the default), JSON,
-  XML, and even CBOR.
-* When listing network attachement definitions it will also show you the resources that are
-  attached to it.
+* CNI configurations are normally in JSON, but `multusctl` also allows you to use YAML (the
+  default), XML, and even CBOR.
+* Annotation awareness: when listing network attachement definitions it will also show you
+  the resources that are attached to it.
 
-Examples:
+Examples
+--------
 
     multusctl install --wait
     multusctl create myattachment --url=assets/config.yaml
     multusctl list
     multusctl get myattachment --format=json
 
-The CNI config can also be provided via stdin:
+The CNI configuration can also be provided via stdin:
 
     cat assets/config.yaml | multusctl create myattachment
+
+Installation
+------------
+
+One-liner to download the latest Linux AMD64 version and install it in `/usr/bin/` (requires
+curl, grep, sed, and tar):
+
+    VERSION=$(curl --silent https://api.github.com/repos/k8snetworkplumbingwg/multusctl/releases/latest | grep '"tag_name":' | sed --regexp-extended 's/.*"([^"]+)".*/\1/') curl --silent --location https://github.com/k8snetworkplumbingwg/multusctl/releases/download/$VERSION/multusctl_${VERSION:1}_linux_amd64.tar.gz | tar --directory=/usr/bin --extract --gzip multusctl
 
 You can also use this tool as a `kubectl` plugin. Just rename the `multusctl` executable to, say,
 `kubectl-nad`, and then you can do this:
