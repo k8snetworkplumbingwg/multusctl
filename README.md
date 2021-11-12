@@ -40,7 +40,15 @@ curl, grep, sed, and tar):
 
     VERSION=$(curl --silent https://api.github.com/repos/k8snetworkplumbingwg/multusctl/releases/latest | grep '"tag_name":' | sed --regexp-extended 's/.*"([^"]+)".*/\1/') curl --silent --location https://github.com/k8snetworkplumbingwg/multusctl/releases/download/$VERSION/multusctl_${VERSION:1}_linux_amd64.tar.gz | tar --directory=/usr/bin --extract --gzip multusctl
 
-You can also use this tool as a `kubectl` plugin. Just rename the `multusctl` executable to, say,
-`kubectl-nad`, and then you can do this:
+One-liner to install bash completions for the current user (for when you press TAB in bash):
 
-    kubectl nad create myattachment --url=assets/config.yaml
+  mkdir --parents ~/.local/share/bash-completion/completions/ && multusctl bash > ~/.local/share/bash-completion/completions/multusctl && exec bash
+
+You can also use this tool as a `kubectl` plugin. Just rename the `multusctl` executable to, say,
+`kubectl-multus`:
+
+    mv /usr/bin/multusctl /usr/bin/kubectl-multus
+
+and then you can do this:
+
+    kubectl multus create myattachment --url=assets/config.yaml
