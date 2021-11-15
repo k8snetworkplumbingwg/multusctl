@@ -1,7 +1,6 @@
 package client
 
 import (
-	"context"
 	contextpkg "context"
 
 	netpkg "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/client/clientset/versioned"
@@ -20,7 +19,7 @@ type Client struct {
 	apiExtensions *apiextensionspkg.Clientset
 	net           *netpkg.Clientset
 	namespace     string
-	context       context.Context
+	context       contextpkg.Context
 }
 
 func NewClient(masterUrl string, kubeconfigPath string, context string, namespace string) (*Client, error) {
