@@ -11,16 +11,16 @@ builds:
   - darwin
   - windows
   ldflags:
-  - -X 'github.com/tliron/kutil/version.GitVersion={{.Env.VERSION}}'
-  - -X 'github.com/tliron/kutil/version.GitRevision={{.Env.REVISION}}'
-  - -X 'github.com/tliron/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
+  - -X 'github.com/k8snetworkplumbingwg/kutil/version.GitVersion={{.Env.VERSION}}'
+  - -X 'github.com/k8snetworkplumbingwg/kutil/version.GitRevision={{.Env.REVISION}}'
+  - -X 'github.com/k8snetworkplumbingwg/kutil/version.Timestamp={{.Env.TIMESTAMP}}'
 
 nfpms:
 
 - formats:
   - rpm
   - deb
-  homepage: https://github.com/tliron/multusctl
+  homepage: https://github.com/k8snetworkplumbingwg/multusctl
   maintainer: Tal Liron <tal.liron@gmail.com>
   description: CLI client for Multus CNI.
   license: Apache 2.0
@@ -47,5 +47,5 @@ release:
   #prerelease: true
 
   github:
-    owner: tliron
+    owner: k8snetworkplumbingwg
     name: multusctl
