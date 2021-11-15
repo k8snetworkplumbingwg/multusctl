@@ -1,12 +1,12 @@
 package commands
 
 import (
+	"github.com/k8snetworkplumbingwg/multusctl/client"
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/ard"
 	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/util"
-	"github.com/tliron/multusctl/client"
 )
 
 var getNamespace string
