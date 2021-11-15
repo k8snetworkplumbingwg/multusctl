@@ -27,7 +27,7 @@ var getCommand = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		namespace := GetNamespace(getNamespace)
-		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
+		client, err := client.NewClient(masterUrl, kubeconfigPath, context, namespace)
 		util.FailOnError(err)
 		networkAttachmentDefinition, err := client.GetNetworkAttachmentDefinition(args[0])
 		util.FailOnError(err)

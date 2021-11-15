@@ -15,7 +15,7 @@ var uninstallCommand = &cobra.Command{
 	Use:   "uninstall",
 	Short: "Uninstall Multus CNI",
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := client.NewClient(masterUrl, kubeconfigPath, installationNamespace)
+		client, err := client.NewClient(masterUrl, kubeconfigPath, context, installationNamespace)
 		util.FailOnError(err)
 		client.Uninstall()
 	},

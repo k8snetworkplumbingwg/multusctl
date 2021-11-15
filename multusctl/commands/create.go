@@ -25,7 +25,7 @@ var createCommand = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		namespace := GetNamespace(createNamespace)
-		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
+		client, err := client.NewClient(masterUrl, kubeconfigPath, context, namespace)
 		util.FailOnError(err)
 
 		var url urlpkg.URL

@@ -22,7 +22,7 @@ var installCommand = &cobra.Command{
 	Use:   "install",
 	Short: "Install Multus CNI",
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := client.NewClient(masterUrl, kubeconfigPath, installationNamespace)
+		client, err := client.NewClient(masterUrl, kubeconfigPath, context, installationNamespace)
 		util.FailOnError(err)
 		err = client.Install(runtime, registry, wait)
 		util.FailOnError(err)

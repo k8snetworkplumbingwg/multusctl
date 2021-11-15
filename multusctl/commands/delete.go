@@ -19,7 +19,7 @@ var deleteCommand = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		namespace := GetNamespace(deleteNamespace)
-		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
+		client, err := client.NewClient(masterUrl, kubeconfigPath, context, namespace)
 		util.FailOnError(err)
 		err = client.DeleteNetworkAttachmentDefinition(args[0])
 		util.FailOnError(err)

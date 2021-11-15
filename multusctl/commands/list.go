@@ -21,7 +21,7 @@ var listCommand = &cobra.Command{
 	Short: "List network attachment definitions",
 	Run: func(cmd *cobra.Command, args []string) {
 		namespace := GetNamespace(listNamespace)
-		client, err := client.NewClient(masterUrl, kubeconfigPath, namespace)
+		client, err := client.NewClient(masterUrl, kubeconfigPath, context, namespace)
 		util.FailOnError(err)
 		networkAttachmentDefintions, err := client.ListNetworkAttachmentDefinitions()
 		util.FailOnError(err)
