@@ -42,7 +42,7 @@ curl, grep, sed, and tar):
 
 One-liner to install bash completions for the current user (for when you press TAB in bash):
 
-  mkdir --parents ~/.local/share/bash-completion/completions/ && multusctl bash > ~/.local/share/bash-completion/completions/multusctl && exec bash
+    mkdir --parents ~/.local/share/bash-completion/completions/ && multusctl bash > ~/.local/share/bash-completion/completions/multusctl && exec bash
 
 You can also use this tool as a `kubectl` plugin. Just rename the `multusctl` executable to, say,
 `kubectl-multus`:

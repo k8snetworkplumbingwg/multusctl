@@ -32,11 +32,7 @@ var createCommand = &cobra.Command{
 
 		if configUrl != "" {
 			urlContext := urlpkg.NewContext()
-			util.OnExit(func() {
-				if err := urlContext.Release(); err != nil {
-					log.Errorf("%s", err.Error())
-				}
-			})
+			util.OnExitError(urlContext.Release)
 
 			url, err = urlpkg.NewValidURL(configUrl, nil, urlContext)
 			util.FailOnError(err)
