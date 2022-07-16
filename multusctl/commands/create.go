@@ -4,7 +4,7 @@ import (
 	"github.com/k8snetworkplumbingwg/multusctl/client"
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/ard"
-	formatpkg "github.com/tliron/kutil/format"
+	"github.com/tliron/kutil/transcribe"
 	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 )
@@ -53,14 +53,14 @@ var createCommand = &cobra.Command{
 
 		switch format {
 		case "json":
-			err = formatpkg.ValidateJSON(config)
+			err = transcribe.ValidateJSON(config)
 			util.FailOnError(err)
 
 		case "yaml":
 			data, _, err := ard.DecodeYAML(config, false)
 			util.FailOnError(err)
-			data, _ = ard.MapsToStringMaps(data)
-			config, err = formatpkg.EncodeJSON(data, "  ")
+			data, _ = ard.NormalizeStringMaps(data)
+			config, err = transcribe.EncodeJSON(data, "  ")
 			util.FailOnError(err)
 
 		default:

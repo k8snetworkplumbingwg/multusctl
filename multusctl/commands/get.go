@@ -4,8 +4,8 @@ import (
 	"github.com/k8snetworkplumbingwg/multusctl/client"
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/ard"
-	formatpkg "github.com/tliron/kutil/format"
 	"github.com/tliron/kutil/terminal"
+	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 )
 
@@ -16,7 +16,7 @@ var pretty bool
 func init() {
 	rootCommand.AddCommand(getCommand)
 	getCommand.Flags().StringVarP(&getNamespace, "namespace", "n", "", "namespace")
-	getCommand.Flags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", \"cjson\", \"xml\", or \"cbor\")")
+	getCommand.Flags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", \"cjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
 	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"YAML\" format only)")
 	getCommand.Flags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
 }
@@ -33,8 +33,8 @@ var getCommand = &cobra.Command{
 		util.FailOnError(err)
 		data, _, err := ard.DecodeJSON(networkAttachmentDefinition.Spec.Config, false)
 		util.FailOnError(err)
-		data, _ = ard.MapsToStringMaps(data)
-		err = formatpkg.Print(data, format, terminal.Stdout, strict, pretty)
+		data, _ = ard.NormalizeStringMaps(data)
+		err = transcribe.Print(data, format, terminal.Stdout, strict, pretty)
 		util.FailOnError(err)
 	},
 }
