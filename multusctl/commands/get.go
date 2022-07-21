@@ -17,7 +17,7 @@ func init() {
 	rootCommand.AddCommand(getCommand)
 	getCommand.Flags().StringVarP(&getNamespace, "namespace", "n", "", "namespace")
 	getCommand.Flags().StringVarP(&format, "format", "f", "", "force output format (\"yaml\", \"json\", \"cjson\", \"xml\", \"cbor\", \"messagepack\", or \"go\")")
-	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"YAML\" format only)")
+	rootCommand.PersistentFlags().BoolVarP(&strict, "strict", "y", false, "strict output (for \"yaml\" format only)")
 	getCommand.Flags().BoolVarP(&pretty, "pretty", "p", true, "prettify output")
 }
 
