@@ -38,8 +38,11 @@ var rootCommand = &cobra.Command{
 	Use:   toolName,
 	Short: "Control Multus CNI",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		err := terminal.ProcessColorizeFlag(colorize)
+		cleanup, err := terminal.ProcessColorizeFlag(colorize)
 		util.FailOnError(err)
+		if cleanup != nil {
+			util.OnExitError(cleanup)
+		}
 		if logTo == "" {
 			logging.Configure(verbose, nil)
 		} else {

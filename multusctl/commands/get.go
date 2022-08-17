@@ -1,10 +1,11 @@
 package commands
 
 import (
+	"os"
+
 	"github.com/k8snetworkplumbingwg/multusctl/client"
 	"github.com/spf13/cobra"
 	"github.com/tliron/kutil/ard"
-	"github.com/tliron/kutil/terminal"
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 )
@@ -34,7 +35,7 @@ var getCommand = &cobra.Command{
 		data, _, err := ard.DecodeJSON(networkAttachmentDefinition.Spec.Config, false)
 		util.FailOnError(err)
 		data, _ = ard.NormalizeStringMaps(data)
-		err = transcribe.Print(data, format, terminal.Stdout, strict, pretty)
+		err = transcribe.Print(data, format, os.Stdout, strict, pretty)
 		util.FailOnError(err)
 	},
 }
