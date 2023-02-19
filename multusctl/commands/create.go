@@ -30,10 +30,10 @@ var createCommand = &cobra.Command{
 
 		var url urlpkg.URL
 
-		if configUrl != "" {
-			urlContext := urlpkg.NewContext()
-			util.OnExitError(urlContext.Release)
+		urlContext := urlpkg.NewContext()
+		util.OnExitError(urlContext.Release)
 
+		if configUrl != "" {
 			url, err = urlpkg.NewValidURL(configUrl, nil, urlContext)
 			util.FailOnError(err)
 			if format == "" {
@@ -43,7 +43,7 @@ var createCommand = &cobra.Command{
 			if format == "" {
 				format = "yaml"
 			}
-			url, err = urlpkg.ReadToInternalURLFromStdin(format)
+			url, err = urlpkg.ReadToInternalURLFromStdin(format, urlContext)
 			util.FailOnError(err)
 		}
 
