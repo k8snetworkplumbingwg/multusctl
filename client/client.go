@@ -4,14 +4,14 @@ import (
 	contextpkg "context"
 
 	netpkg "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/client/clientset/versioned"
+	"github.com/tliron/commonlog"
 	kubernetesutil "github.com/tliron/kutil/kubernetes"
-	"github.com/tliron/kutil/logging"
 	apiextensionspkg "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	kubernetespkg "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
 
-var log = logging.GetLogger("multusctl.client")
+var log = commonlog.GetLogger("multusctl.client")
 
 type Client struct {
 	config        *rest.Config

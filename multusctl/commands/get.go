@@ -5,7 +5,7 @@ import (
 
 	"github.com/k8snetworkplumbingwg/multusctl/client"
 	"github.com/spf13/cobra"
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/transcribe"
 	"github.com/tliron/kutil/util"
 )

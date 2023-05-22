@@ -3,9 +3,9 @@ package commands
 import (
 	"github.com/k8snetworkplumbingwg/multusctl/client"
 	"github.com/spf13/cobra"
-	"github.com/tliron/kutil/ard"
+	"github.com/tliron/exturl"
+	"github.com/tliron/go-ard"
 	"github.com/tliron/kutil/transcribe"
-	urlpkg "github.com/tliron/kutil/url"
 	"github.com/tliron/kutil/util"
 )
 
@@ -28,13 +28,13 @@ var createCommand = &cobra.Command{
 		client, err := client.NewClient(masterUrl, kubeconfigPath, context, namespace)
 		util.FailOnError(err)
 
-		var url urlpkg.URL
+		var url exturl.URL
 
-		urlContext := urlpkg.NewContext()
+		urlContext := exturl.NewContext()
 		util.OnExitError(urlContext.Release)
 
 		if configUrl != "" {
-			url, err = urlpkg.NewValidURL(configUrl, nil, urlContext)
+			url, err = exturl.NewValidURL(configUrl, nil, urlContext)
 			util.FailOnError(err)
 			if format == "" {
 				format = url.Format()
@@ -43,12 +43,12 @@ var createCommand = &cobra.Command{
 			if format == "" {
 				format = "yaml"
 			}
-			url, err = urlpkg.ReadToInternalURLFromStdin(format, urlContext)
+			url, err = exturl.ReadToInternalURLFromStdin(format, urlContext)
 			util.FailOnError(err)
 		}
 
 		var config string
-		config, err = urlpkg.ReadString(url)
+		config, err = exturl.ReadString(url)
 		util.FailOnError(err)
 
 		switch format {
