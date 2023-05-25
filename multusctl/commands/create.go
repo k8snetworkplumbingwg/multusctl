@@ -1,6 +1,8 @@
 package commands
 
 import (
+	contextpkg "context"
+
 	"github.com/k8snetworkplumbingwg/multusctl/client"
 	"github.com/spf13/cobra"
 	"github.com/tliron/exturl"
@@ -32,9 +34,10 @@ var createCommand = &cobra.Command{
 
 		urlContext := exturl.NewContext()
 		util.OnExitError(urlContext.Release)
+		context_ := contextpkg.TODO()
 
 		if configUrl != "" {
-			url, err = exturl.NewValidURL(configUrl, nil, urlContext)
+			url, err = urlContext.NewValidURL(context_, configUrl, nil)
 			util.FailOnError(err)
 			if format == "" {
 				format = url.Format()
@@ -43,12 +46,12 @@ var createCommand = &cobra.Command{
 			if format == "" {
 				format = "yaml"
 			}
-			url, err = exturl.ReadToInternalURLFromStdin(format, urlContext)
+			url, err = urlContext.ReadToInternalURLFromStdin(context_, format)
 			util.FailOnError(err)
 		}
 
 		var config string
-		config, err = exturl.ReadString(url)
+		config, err = exturl.ReadString(context_, url)
 		util.FailOnError(err)
 
 		switch format {

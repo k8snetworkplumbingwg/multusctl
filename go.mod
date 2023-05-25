@@ -6,9 +6,9 @@ require (
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.4.0
 	github.com/spf13/cobra v1.7.0
 	github.com/tliron/commonlog v0.1.0
-	github.com/tliron/exturl v0.1.0
-	github.com/tliron/go-ard v0.1.0
-	github.com/tliron/kutil v0.2.1
+	github.com/tliron/exturl v0.2.0
+	github.com/tliron/go-ard v0.1.1
+	github.com/tliron/kutil v0.2.2
 	k8s.io/api v0.27.2
 	k8s.io/apiextensions-apiserver v0.27.2
 	k8s.io/apimachinery v0.27.2
