@@ -1,0 +1,16 @@
+name: netat
+bridge: data-plane-vlan
+isDefaultGateway: true
+ipMasq: true
+type: macvlan
+master: enx24f5a2f13bd3
+mode: bridge
+promiscMode: true
+ipam:
+  type: host-local
+  subnet: 192.168.3.0/24
+  rangeStart: 192.168.3.2
+  rangeEnd: 192.168.3.254
+  routes:
+  - dst: 0.0.0.0/0
+  gateway: 192.168.3.1
